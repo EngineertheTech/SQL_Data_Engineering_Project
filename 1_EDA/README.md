@@ -1,39 +1,64 @@
-# HEADING 1
-## HEADING 2
-### HEADING 3
+# Explanatory Data Analysis with SQL: Job Market Analysis
 
-Normal Text
-**Bold Text**
-*Italics Text*
-`This is for code`
+![Project 1 Overview](../Images/1_1_Project1_EDA.png)
 
-- Bullet 1
-- Bullet 2
+A SQL project analyzing the data engineering job market using real world jobb posting data. It demonstrates my ability to **write production-quality analytical SQL, design efficient queries, and turn business questions in data-driven insights**.
 
-1. Number 1
-2. Number 2
+## Executive Summary
+- ☑️ **Project scope:** Built **3 analytical queries** thata answer key questions about the data engineering job market
+- ☑️ **Data:** Used **multi-table joins** across fact and dimensional tables to extract insights
+- ☑️ **Analytics:** Applied **aggregations, filtering, and sorting** to find top skills by demand, salary and overall value
+- ☑️ **Outcome:** Delivered **actionable insights** on SQL/python dominance, cloud trends, and salary patterns
 
-[Link Text](https://google.com)
-![Project 1 Overview](../Images/Data%20IMG%20explained.png)
+If you only have a minute, can look into these:
 
-``` sql
-SELECT 
-    sd.skills, 
-    ROUND(MEDIAN(jpf.salary_year_avg), 0) AS median_salary,
-    COUNT(jpf.*) AS demand_count
-FROM job_postings_fact AS jpf
-INNER JOIN skills_job_dim AS sjd 
-    ON jpf.job_id = sjd.job_id
-INNER JOIN skills_dim AS sd 
-    ON sjd.skill_id = sd.skill_id
-WHERE
-    jpf.job_title_short = 'Data Engineer' 
-    AND jpf.job_work_from_home = True
-GROUP BY 
-    sd.skills
-Having 
-    COUNT(jpf.*) > 100
-ORDER BY 
-    median_salary DESC
-LIMIT 25;
-```
+1. [01_top demanded skills.sql](../1_EDA/01_top%20demanded%20skills.sql) - demand analysis with multi-table joins
+2. [02_top paying skills.sql](../1_EDA/02_top%20paying%20skills.sql) - salary analysis with aggregations
+3. [03_top optimal skills.sql](../1_EDA/03_top%20optimal%20skills.sql) - combined demand/salary optimization query
+
+## Problem & Context
+Job market analysts need to answer questions like
+- 🚀**Most in-demand:** Which skills are most in-demand for data engineers? 
+- 💸**Highest paid:** Which skills command the highest salaries?
+- ⚖️**Best trade-off:** What is the optimal skill set balancing demand and compensation?
+This project analyzes a **data warehouse** built using a star schema design. The warehouse structure consists of:
+![Structure](../Images/1_2_Project2_Data_Pipeline.png)
+- **Fact Table:** `job_posting_fact` - Central table containing job posting details (job titles, locations, salaries, dates, etc.)
+- **Dimension Tables:**
+    - `company_dim` - Company information linked to job postings
+    - `skills_dim` - Skills catalog with skill names and types
+- **Bridge Table:** `skills_job_dim` - Resolves the many-to-many relationship between job postings and skills
+By querying across these interconnected tables, I extracted insights about skill demand, salary patterns, and optimal skill combinations for data engineering roles.
+
+## Tech Stack
+- 🐤 **Query Engine:** DuckDB for fast OLAP-style analytical queries  
+- 🧮 **Language:** SQL (ANSI-style with analytical functions)  
+- 📊 **Data Model:** Star schema with fact + dimension + bridge tables  
+- 🛠️ **Development:** VS Code for SQL editing + Terminal for DuckDB CLI  
+- 📦 **Version Control:** Git/GitHub for versioned SQL scripts  
+
+## Analysis Overview
+### Query Structure
+1. **[Top Demanded Skills](01_top%20demanded%20skills.sql)** – Identifies the 10 most in-demand skills for remote data engineer positions
+2. **[Top Paying Skills](./02_top%20paying%20skills.sql)** – Analyzes the 25 highest-paying skills with salary and demand metrics
+3. **[Optimal Skills](03_top%20optimal%20skills.sql)** – Calculates an optimal score using natural log of demand combined with median salary to identify the most valuable skills to learn
+### Key Insights
+- 🧠 Core languages: SQL and Python each appear in ~29,000 job postings, making them the most demanded skills
+- ☁️ Cloud platforms: AWS and Azure are critical for modern data engineering roles- 
+- 🧱 Infra & tooling: Kubernetes, Docker, and Terraform are associated with premium salaries
+- 🔥 Big data tools: Apache Spark shows strong demand with competitive compensation
+
+##  SQL Skills Demonstrated
+### Query Design & Optimization
+- **Complex Joins**: Multi-table `INNER JOIN` operations across `job_postings_fact`, `skills_job_dim`, and `skills_dim`
+- **Aggregations**: `COUNT()`, `MEDIAN()`, `ROUND()` for statistical analysis
+- **Filtering**: Boolean logic with `WHERE` clauses and multiple conditions (`job_title_short`, `job_work_from_home`, `salary_year_avg IS NOT NULL`)
+- **Sorting & Limiting**: `ORDER BY` with `DESC` and `LIMIT` for top-N analysis
+### Data Analysis Techniques
+
+- **Grouping**: `GROUP BY` for categorical analysis by skill
+- **Mathematical Functions**: `LN()` for natural logarithm transformation to normalize demand metrics
+- **Calculated Metrics**: Derived optimal score combining log-transformed demand with median salary
+- **HAVING Clause**: Filtering aggregated results (skills with >= 100 postings)
+- **NULL Handling**: Proper filtering of incomplete records (`salary_year_avg IS NOT NULL`)
+
