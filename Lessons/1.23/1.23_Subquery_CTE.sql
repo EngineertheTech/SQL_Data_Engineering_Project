@@ -116,3 +116,37 @@ INNER JOIN title_median AS o
 WHERE r.job_work_from_home = TRUE
     AND o.job_work_from_home = FALSE
 ORDER BY remote_premium DESC;
+
+SELECT *
+FROM range(2) AS src(key);
+
+SELECT *
+FROM range(3) AS src(key)
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM range(2) AS tgt(key)
+    WHERE tgt.key = src.key
+);
+
+-- Final Example
+-- Identify job postings that have no assoiciated skills before loading them into data mart
+SELECT *
+FROM job_postings_fact
+ORDER BY job_id
+LIMIT 10;
+
+SELECT *
+FROM skills_job_dim
+ORDER BY job_id
+LIMIT 40;
+
+SELECT *
+FROM job_postings_fact AS tgt
+WHERE NOT EXISTS {
+    SELECT *
+    FROM skills_job_dim as SRC
+    WHERE tgt.job_id = src.job_id
+}
+ORDER BY job_id;
+
+
