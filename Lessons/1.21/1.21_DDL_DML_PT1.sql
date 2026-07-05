@@ -50,7 +50,7 @@ SELECT *
 FROM staging.priority_roles;
 
 ALTER TABLE staging.prefered_roles
-RENAME TO priority_role;
+RENAME TO priority_roles;
 
 ALTER TABLE staging.priority_roles
 RENAME COLUMN prefered_role TO priority_lvl;
